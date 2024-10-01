@@ -76,6 +76,10 @@ export interface GeolocatedResult {
      * Callback you can use to manually trigger the position query.
      */
     getPosition: () => void;
+    /**
+     * Callback you can use to manually clear the position query.
+     */
+    clearWatch: () => void;
 }
 
 /**
@@ -188,6 +192,16 @@ export function useGeolocated(config: GeolocatedConfig = {}): GeolocatedResult {
         positionOptions,
     ]);
 
+    const clearWatch = useCallback(() => {
+        if (watchPosition && watchId.current) {
+            geolocationProvider?.clearWatch(watchId.current);
+        }
+    }, [
+        geolocationProvider,
+        watchId.current,
+        watchPosition,
+    ]);
+
     useEffect(() => {
         let permission: PermissionStatus;
 
@@ -236,5 +250,6 @@ export function useGeolocated(config: GeolocatedConfig = {}): GeolocatedResult {
         isGeolocationEnabled,
         isGeolocationAvailable: Boolean(geolocationProvider),
         positionError,
+        clearWatch,
     };
 }
